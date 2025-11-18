@@ -103,6 +103,49 @@ snapshots[
 ]
 
 snapshots[
+    "test_event_get_slack_message_payload_snapshots event_cloudtrail_authorize_sg_port_zero.json"
+] = [
+    {
+        "attachments": [
+            {
+                "color": "#FF9900",
+                "fallback": "AuthorizeSecurityGroupIngress by network-engineer",
+                "fields": [
+                    {
+                        "short": True,
+                        "title": "Event",
+                        "value": "🔓 *AuthorizeSecurityGroupIngress*",
+                    },
+                    {"short": True, "title": "Region", "value": "us-east-1"},
+                    {
+                        "short": False,
+                        "title": "Principal",
+                        "value": "👤 network-engineer (IAM User) 🔐",
+                    },
+                    {"short": True, "title": "Time", "value": "2025-01-16T14:20:00Z"},
+                    {"short": True, "title": "Source IP", "value": "192.0.2.100"},
+                    {
+                        "short": True,
+                        "title": "Security Group ID",
+                        "value": "`sg-0test1234port0567`",
+                    },
+                    {
+                        "short": False,
+                        "title": "Rule Changes",
+                        "value": "• TCP | port 0 | 10.0.0.0/16 | Test rule with port 0",
+                    },
+                ],
+                "mrkdwn_in": ["text", "fields"],
+                "title": "🔐 Security Configuration Change",
+            }
+        ],
+        "channel": "slack_testing_sandbox",
+        "icon_emoji": ":aws:",
+        "username": "notify_slack_test",
+    }
+]
+
+snapshots[
     "test_event_get_slack_message_payload_snapshots event_cloudtrail_create_network_acl_entry.json"
 ] = [
     {

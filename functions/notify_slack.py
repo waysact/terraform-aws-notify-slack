@@ -704,11 +704,16 @@ def format_cloudtrail_security_event(  # noqa: C901
                     rule_details = []
                     for item in items:
                         protocol = item.get("ipProtocol", "")
-                        from_port = item.get("fromPort", "")
-                        to_port = item.get("toPort", "")
+                        from_port = item.get("fromPort")
+                        to_port = item.get("toPort")
 
                         # Format port range
-                        if from_port and to_port:
+                        if (
+                            from_port is not None
+                            and to_port is not None
+                            and from_port != ""
+                            and to_port != ""
+                        ):
                             if from_port == to_port:
                                 port_str = f"port {from_port}"
                             else:

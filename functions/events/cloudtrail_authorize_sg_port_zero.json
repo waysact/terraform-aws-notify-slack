@@ -1,0 +1,72 @@
+{
+  "version": "0",
+  "id": "12345678-1234-1234-1234-123456789016",
+  "detail-type": "AWS API Call via CloudTrail",
+  "source": "aws.ec2",
+  "account": "000000000000",
+  "time": "2025-01-16T14:20:00Z",
+  "region": "us-east-1",
+  "resources": [],
+  "detail": {
+    "eventVersion": "1.10",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAIPSVCDGDEZEXAMPLE",
+      "arn": "arn:aws:iam::000000000000:user/network-engineer",
+      "accountId": "000000000000",
+      "accessKeyId": "ASIAZA6BDNXXXEXAMPLE",
+      "userName": "network-engineer",
+      "sessionContext": {
+        "attributes": {
+          "creationDate": "2025-01-16T14:00:00Z",
+          "mfaAuthenticated": "true"
+        }
+      }
+    },
+    "eventTime": "2025-01-16T14:20:00Z",
+    "eventSource": "ec2.amazonaws.com",
+    "eventName": "AuthorizeSecurityGroupIngress",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "192.0.2.100",
+    "userAgent": "aws-cli/2.15.0 Python/3.11.6 Linux/5.15.0 source/x86_64 prompt/off command/ec2.authorize-security-group-ingress",
+    "requestParameters": {
+      "groupId": "sg-0test1234port0567",
+      "ipPermissions": {
+        "items": [
+          {
+            "ipProtocol": "tcp",
+            "fromPort": 0,
+            "toPort": 0,
+            "ipRanges": {
+              "items": [
+                {
+                  "cidrIp": "10.0.0.0/16",
+                  "description": "Test rule with port 0"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "responseElements": {
+      "requestId": "d4e5f6a7-8901-23bc-defg-456789012def",
+      "_return": True,
+      "securityGroupRuleSet": {
+        "items": []
+      }
+    },
+    "requestID": "d4e5f6a7-8901-23bc-defg-456789012def",
+    "eventID": "i4h5g6f7-e8d9-0123-defg-hi4567890123",
+    "readOnly": False,
+    "eventType": "AwsApiCall",
+    "managementEvent": True,
+    "recipientAccountId": "000000000000",
+    "eventCategory": "Management",
+    "tlsDetails": {
+      "tlsVersion": "TLSv1.3",
+      "cipherSuite": "TLS_AES_256_GCM_SHA384",
+      "clientProvidedHostHeader": "ec2.us-east-1.amazonaws.com"
+    }
+  }
+}
