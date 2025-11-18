@@ -214,7 +214,7 @@ snapshots[
                         "value": "👤 userExample (IAM User) 🔐",
                     },
                     {"short": True, "title": "Time", "value": "2025-01-15T22:44:07Z"},
-                    {"short": True, "title": "Source IP", "value": "159.196.124.58"},
+                    {"short": True, "title": "Source IP", "value": "52.93.178.234"},
                     {
                         "short": True,
                         "title": "Security Group Name",

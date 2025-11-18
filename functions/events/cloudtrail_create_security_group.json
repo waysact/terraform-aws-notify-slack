@@ -27,7 +27,7 @@
     "eventSource": "ec2.amazonaws.com",
     "eventName": "CreateSecurityGroup",
     "awsRegion": "eu-west-1",
-    "sourceIPAddress": "159.196.124.58",
+    "sourceIPAddress": "52.93.178.234",
     "userAgent": "APN/1.0 HashiCorp/1.0 Terraform/0.12.31 (+https://www.terraform.io) terraform-provider-aws/5.94.1 (+https://registry.terraform.io/providers/hashicorp/aws) aws-sdk-go-v2/1.36.3 ua/2.1 os/macos lang/go#1.23.7 md/GOOS#darwin md/GOARCH#arm64 api/ec2#1.210.1 m/g",
     "requestParameters": {
       "groupName": "utility-instance",
