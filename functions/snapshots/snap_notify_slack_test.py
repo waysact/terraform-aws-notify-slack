@@ -69,13 +69,6 @@ snapshots[
                     },
                     {"short": True, "title": "Region", "value": "us-east-1"},
                     {
-                        "short": False,
-                        "title": "Principal",
-                        "value": "👤 AIDAIPSVCDGDEZEXAMPLE:session-name (Assumed Role)",
-                    },
-                    {"short": True, "title": "Time", "value": "2025-01-15T23:15:30Z"},
-                    {"short": True, "title": "Source IP", "value": "203.0.113.42"},
-                    {
                         "short": True,
                         "title": "Security Group ID",
                         "value": "`sg-0abcd1234efgh5678`",
@@ -86,6 +79,13 @@ snapshots[
                         "value": """• TCP | port 443 | 10.0.0.0/8 | Allow HTTPS from internal network
 • TCP | port 22 | SG: sg-0xyz9876abcd5432 | Allow SSH from bastion host""",
                     },
+                    {
+                        "short": False,
+                        "title": "Principal",
+                        "value": "👤 AIDAIPSVCDGDEZEXAMPLE:session-name (Assumed Role)",
+                    },
+                    {"short": True, "title": "Time", "value": "2025-01-15T23:15:30Z"},
+                    {"short": True, "title": "Source IP", "value": "203.0.113.42"},
                     {
                         "short": False,
                         "title": "Tool",
@@ -118,13 +118,6 @@ snapshots[
                     },
                     {"short": True, "title": "Region", "value": "us-east-1"},
                     {
-                        "short": False,
-                        "title": "Principal",
-                        "value": "👤 network-engineer (IAM User) 🔐",
-                    },
-                    {"short": True, "title": "Time", "value": "2025-01-16T14:20:00Z"},
-                    {"short": True, "title": "Source IP", "value": "192.0.2.100"},
-                    {
                         "short": True,
                         "title": "Security Group ID",
                         "value": "`sg-0test1234port0567`",
@@ -134,6 +127,13 @@ snapshots[
                         "title": "Rule Changes",
                         "value": "• TCP | port 0 | 10.0.0.0/16 | Test rule with port 0",
                     },
+                    {
+                        "short": False,
+                        "title": "Principal",
+                        "value": "👤 network-engineer (IAM User) 🔐",
+                    },
+                    {"short": True, "title": "Time", "value": "2025-01-16T14:20:00Z"},
+                    {"short": True, "title": "Source IP", "value": "192.0.2.100"},
                 ],
                 "mrkdwn_in": ["text", "fields"],
                 "title": "🔐 Security Configuration Change",
@@ -161,13 +161,6 @@ snapshots[
                     },
                     {"short": True, "title": "Region", "value": "us-west-2"},
                     {
-                        "short": False,
-                        "title": "Principal",
-                        "value": "👤 network-admin (IAM User) 🔐",
-                    },
-                    {"short": True, "title": "Time", "value": "2025-01-15T23:30:45Z"},
-                    {"short": True, "title": "Source IP", "value": "198.51.100.25"},
-                    {
                         "short": True,
                         "title": "Network ACL ID",
                         "value": "`acl-0123456789abcdef0`",
@@ -177,6 +170,13 @@ snapshots[
                         "title": "NACL Entry Details",
                         "value": "Rule #: 100 | Action: ALLOW | Direction: Ingress | CIDR: 192.168.1.0/24 | Protocol: TCP",
                     },
+                    {
+                        "short": False,
+                        "title": "Principal",
+                        "value": "👤 network-admin (IAM User) 🔐",
+                    },
+                    {"short": True, "title": "Time", "value": "2025-01-15T23:30:45Z"},
+                    {"short": True, "title": "Source IP", "value": "198.51.100.25"},
                     {
                         "short": False,
                         "title": "Tool",
@@ -209,21 +209,14 @@ snapshots[
                     },
                     {"short": True, "title": "Region", "value": "eu-west-1"},
                     {
-                        "short": False,
-                        "title": "Principal",
-                        "value": "👤 userExample (IAM User) 🔐",
+                        "short": True,
+                        "title": "Security Group ID",
+                        "value": "`sg-077f4afab6ad41d72`",
                     },
-                    {"short": True, "title": "Time", "value": "2025-01-15T22:44:07Z"},
-                    {"short": True, "title": "Source IP", "value": "52.93.178.234"},
                     {
                         "short": True,
                         "title": "Security Group Name",
                         "value": "`utility-instance`",
-                    },
-                    {
-                        "short": True,
-                        "title": "Security Group ID",
-                        "value": "`sg-077f4afab6ad41d72`",
                     },
                     {"short": True, "title": "VPC ID", "value": "`vpc-730b0311`"},
                     {
@@ -231,6 +224,13 @@ snapshots[
                         "title": "Description",
                         "value": "Allow full outbound access for EC2 utility instance",
                     },
+                    {
+                        "short": False,
+                        "title": "Principal",
+                        "value": "👤 userExample (IAM User) 🔐",
+                    },
+                    {"short": True, "title": "Time", "value": "2025-01-15T22:44:07Z"},
+                    {"short": True, "title": "Source IP", "value": "52.93.178.234"},
                     {
                         "short": False,
                         "title": "Tool",
@@ -263,17 +263,17 @@ snapshots[
                     },
                     {"short": True, "title": "Region", "value": "ap-southeast-1"},
                     {
+                        "short": True,
+                        "title": "Security Group ID",
+                        "value": "`sg-0old1234removed567`",
+                    },
+                    {
                         "short": False,
                         "title": "Principal",
                         "value": "👤 security-admin (IAM User)",
                     },
                     {"short": True, "title": "Time", "value": "2025-01-16T10:22:15Z"},
                     {"short": True, "title": "Source IP", "value": "203.0.113.99"},
-                    {
-                        "short": True,
-                        "title": "Security Group ID",
-                        "value": "`sg-0old1234removed567`",
-                    },
                 ],
                 "mrkdwn_in": ["text", "fields"],
                 "title": "🔐 Security Configuration Change",
