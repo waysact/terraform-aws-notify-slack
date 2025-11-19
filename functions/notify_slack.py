@@ -611,10 +611,10 @@ def format_cloudtrail_security_event(  # noqa: C901
     emoji_map = {
         "CreateSecurityGroup": "🆕",
         "DeleteSecurityGroup": "🗑️",
-        "AuthorizeSecurityGroupIngress": "🔓",
+        "AuthorizeSecurityGroupIngress": "📥",
         "AuthorizeSecurityGroupEgress": "📤",
-        "RevokeSecurityGroupIngress": "🔒",
-        "RevokeSecurityGroupEgress": "🚫",
+        "RevokeSecurityGroupIngress": "🔐",
+        "RevokeSecurityGroupEgress": "🔐",
         "CreateNetworkAcl": "🆕",
         "CreateNetworkAclEntry": "➕",
         "DeleteNetworkAcl": "🗑️",
@@ -656,14 +656,14 @@ def format_cloudtrail_security_event(  # noqa: C901
 
         if group_id:
             fields.append(
-                {"title": "Security Group ID", "value": f"`{group_id}`", "short": True}
+                {"title": "Security Group ID", "value": f"🛡️ `{group_id}`", "short": True}
             )
 
         if group_name:
             fields.append(
                 {
                     "title": "Security Group Name",
-                    "value": f"`{group_name}`",
+                    "value": f"🛡️ `{group_name}`",
                     "short": True,
                 }
             )
@@ -679,7 +679,7 @@ def format_cloudtrail_security_event(  # noqa: C901
 
         if nacl_id:
             fields.append(
-                {"title": "Network ACL ID", "value": f"`{nacl_id}`", "short": True}
+                {"title": "Network ACL ID", "value": f"🚧 `{nacl_id}`", "short": True}
             )
 
         if vpc_id:
@@ -729,7 +729,9 @@ def format_cloudtrail_security_event(  # noqa: C901
                                 protocol_display = (
                                     protocol.upper() if protocol != "-1" else "All"
                                 )
-                                rule_str = f"• {protocol_display} | {port_str} | {cidr}"
+                                # Add warning emoji for risky CIDR ranges
+                                warning = "⚠️ " if cidr in ["0.0.0.0/0", "::/0"] else ""
+                                rule_str = f"{warning}• {protocol_display} | {port_str} | {cidr}"
                                 if desc:
                                     rule_str += f" | {desc}"
                                 rule_details.append(rule_str)
@@ -772,7 +774,8 @@ def format_cloudtrail_security_event(  # noqa: C901
             if rule_number:
                 entry_details.append(f"Rule #: {rule_number}")
             if rule_action:
-                entry_details.append(f"Action: {rule_action.upper()}")
+                action_emoji = "✅" if rule_action.upper() == "ALLOW" else "❌"
+                entry_details.append(f"Action: {action_emoji} {rule_action.upper()}")
             if egress is not None:
                 entry_details.append(f"Direction: {'Egress' if egress else 'Ingress'}")
             if cidr_block:
@@ -793,7 +796,7 @@ def format_cloudtrail_security_event(  # noqa: C901
 
     # 4. REGION/WHO - Region and user information
     fields.append(
-        {"title": "Region", "value": detail.get("awsRegion", region), "short": True}
+        {"title": "Region", "value": f"🌏 {detail.get('awsRegion', region)}", "short": True}
     )
 
     user_display = f"👤 {user_name}"
@@ -808,7 +811,7 @@ def format_cloudtrail_security_event(  # noqa: C901
 
     # 5. WHERE - Source IP
     source_ip = detail.get("sourceIPAddress", "Unknown")
-    fields.append({"title": "Source IP", "value": source_ip, "short": True})
+    fields.append({"title": "Source IP", "value": f"🌐 {source_ip}", "short": True})
 
     # 6. HOW - Tool information (Terraform, etc.)
     user_agent = detail.get("userAgent", "")

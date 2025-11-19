@@ -74,12 +74,12 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_autho
                     {
                         'short': True,
                         'title': 'Event',
-                        'value': '🔓 *AuthorizeSecurityGroupIngress*'
+                        'value': '📥 *AuthorizeSecurityGroupIngress*'
                     },
                     {
                         'short': True,
                         'title': 'Security Group ID',
-                        'value': '`sg-0abcd1234efgh5678`'
+                        'value': '🛡️ `sg-0abcd1234efgh5678`'
                     },
                     {
                         'short': False,
@@ -90,7 +90,7 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_autho
                     {
                         'short': True,
                         'title': 'Region',
-                        'value': 'us-east-1'
+                        'value': '🌏 us-east-1'
                     },
                     {
                         'short': False,
@@ -100,7 +100,7 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_autho
                     {
                         'short': True,
                         'title': 'Source IP',
-                        'value': '203.0.113.42'
+                        'value': '🌐 203.0.113.42'
                     },
                     {
                         'short': False,
@@ -131,12 +131,12 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_autho
                     {
                         'short': True,
                         'title': 'Event',
-                        'value': '🔓 *AuthorizeSecurityGroupIngress*'
+                        'value': '📥 *AuthorizeSecurityGroupIngress*'
                     },
                     {
                         'short': True,
                         'title': 'Security Group ID',
-                        'value': '`sg-0test1234port0567`'
+                        'value': '🛡️ `sg-0test1234port0567`'
                     },
                     {
                         'short': False,
@@ -146,7 +146,7 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_autho
                     {
                         'short': True,
                         'title': 'Region',
-                        'value': 'us-east-1'
+                        'value': '🌏 us-east-1'
                     },
                     {
                         'short': False,
@@ -156,7 +156,7 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_autho
                     {
                         'short': True,
                         'title': 'Source IP',
-                        'value': '192.0.2.100'
+                        'value': '🌐 192.0.2.100'
                     }
                 ],
                 'mrkdwn_in': [
@@ -187,17 +187,17 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_creat
                     {
                         'short': True,
                         'title': 'Network ACL ID',
-                        'value': '`acl-0123456789abcdef0`'
+                        'value': '🚧 `acl-0123456789abcdef0`'
                     },
                     {
                         'short': False,
                         'title': 'NACL Entry Details',
-                        'value': 'Rule #: 100 | Action: ALLOW | Direction: Ingress | CIDR: 192.168.1.0/24 | Protocol: TCP'
+                        'value': 'Rule #: 100 | Action: ✅ ALLOW | Direction: Ingress | CIDR: 192.168.1.0/24 | Protocol: TCP'
                     },
                     {
                         'short': True,
                         'title': 'Region',
-                        'value': 'us-west-2'
+                        'value': '🌏 us-west-2'
                     },
                     {
                         'short': False,
@@ -207,7 +207,7 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_creat
                     {
                         'short': True,
                         'title': 'Source IP',
-                        'value': '198.51.100.25'
+                        'value': '🌐 198.51.100.25'
                     },
                     {
                         'short': False,
@@ -243,12 +243,12 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_creat
                     {
                         'short': True,
                         'title': 'Security Group ID',
-                        'value': '`sg-077f4afab6ad41d72`'
+                        'value': '🛡️ `sg-077f4afab6ad41d72`'
                     },
                     {
                         'short': True,
                         'title': 'Security Group Name',
-                        'value': '`utility-instance`'
+                        'value': '🛡️ `utility-instance`'
                     },
                     {
                         'short': True,
@@ -263,7 +263,7 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_creat
                     {
                         'short': True,
                         'title': 'Region',
-                        'value': 'eu-west-1'
+                        'value': '🌏 eu-west-1'
                     },
                     {
                         'short': False,
@@ -273,7 +273,7 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_creat
                     {
                         'short': True,
                         'title': 'Source IP',
-                        'value': '52.93.178.234'
+                        'value': '🌐 52.93.178.234'
                     },
                     {
                         'short': False,
@@ -309,12 +309,12 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_delet
                     {
                         'short': True,
                         'title': 'Security Group ID',
-                        'value': '`sg-0old1234removed567`'
+                        'value': '🛡️ `sg-0old1234removed567`'
                     },
                     {
                         'short': True,
                         'title': 'Region',
-                        'value': 'ap-southeast-1'
+                        'value': '🌏 ap-southeast-1'
                     },
                     {
                         'short': False,
@@ -324,7 +324,7 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_delet
                     {
                         'short': True,
                         'title': 'Source IP',
-                        'value': '203.0.113.99'
+                        'value': '🌐 203.0.113.99'
                     }
                 ],
                 'mrkdwn_in': [
