@@ -78,11 +78,6 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_autho
                     },
                     {
                         'short': True,
-                        'title': 'Region',
-                        'value': 'us-east-1'
-                    },
-                    {
-                        'short': True,
                         'title': 'Security Group ID',
                         'value': '`sg-0abcd1234efgh5678`'
                     },
@@ -91,6 +86,11 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_autho
                         'title': 'Rule Changes',
                         'value': '''• TCP | port 443 | 10.0.0.0/8 | Allow HTTPS from internal network
 • TCP | port 22 | SG: sg-0xyz9876abcd5432 | Allow SSH from bastion host'''
+                    },
+                    {
+                        'short': True,
+                        'title': 'Region',
+                        'value': 'us-east-1'
                     },
                     {
                         'short': False,
@@ -135,11 +135,6 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_autho
                     },
                     {
                         'short': True,
-                        'title': 'Region',
-                        'value': 'us-east-1'
-                    },
-                    {
-                        'short': True,
                         'title': 'Security Group ID',
                         'value': '`sg-0test1234port0567`'
                     },
@@ -147,6 +142,11 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_autho
                         'short': False,
                         'title': 'Rule Changes',
                         'value': '• TCP | port 0 | 10.0.0.0/16 | Test rule with port 0'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Region',
+                        'value': 'us-east-1'
                     },
                     {
                         'short': False,
@@ -186,11 +186,6 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_creat
                     },
                     {
                         'short': True,
-                        'title': 'Region',
-                        'value': 'us-west-2'
-                    },
-                    {
-                        'short': True,
                         'title': 'Network ACL ID',
                         'value': '`acl-0123456789abcdef0`'
                     },
@@ -198,6 +193,11 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_creat
                         'short': False,
                         'title': 'NACL Entry Details',
                         'value': 'Rule #: 100 | Action: ALLOW | Direction: Ingress | CIDR: 192.168.1.0/24 | Protocol: TCP'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Region',
+                        'value': 'us-west-2'
                     },
                     {
                         'short': False,
@@ -242,11 +242,6 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_creat
                     },
                     {
                         'short': True,
-                        'title': 'Region',
-                        'value': 'eu-west-1'
-                    },
-                    {
-                        'short': True,
                         'title': 'Security Group ID',
                         'value': '`sg-077f4afab6ad41d72`'
                     },
@@ -264,6 +259,11 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_creat
                         'short': False,
                         'title': 'Description',
                         'value': 'Allow full outbound access for EC2 utility instance'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Region',
+                        'value': 'eu-west-1'
                     },
                     {
                         'short': False,
@@ -308,13 +308,13 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_delet
                     },
                     {
                         'short': True,
-                        'title': 'Region',
-                        'value': 'ap-southeast-1'
+                        'title': 'Security Group ID',
+                        'value': '`sg-0old1234removed567`'
                     },
                     {
                         'short': True,
-                        'title': 'Security Group ID',
-                        'value': '`sg-0old1234removed567`'
+                        'title': 'Region',
+                        'value': 'ap-southeast-1'
                     },
                     {
                         'short': False,

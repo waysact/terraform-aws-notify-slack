@@ -642,14 +642,11 @@ def format_cloudtrail_security_event(  # noqa: C901
     request_params = detail.get("requestParameters", {})
     response_elements = detail.get("responseElements", {})
 
-    # Build fields based on event type - PRIORITY ORDER: What, Resource, Changes, Who, When/Where, How
+    # Build fields based on event type - PRIORITY ORDER: What, Resource, Changes, Region/Who, Where, How
     fields = []
 
-    # 1. WHAT - Event name and region (most critical)
+    # 1. WHAT - Event name (most critical)
     fields.append({"title": "Event", "value": f"{emoji} *{event_name}*", "short": True})
-    fields.append(
-        {"title": "Region", "value": detail.get("awsRegion", region), "short": True}
-    )
 
     # 2. RESOURCE - Security Group or NACL identifiers
     if "SecurityGroup" in event_name:
@@ -794,7 +791,11 @@ def format_cloudtrail_security_event(  # noqa: C901
                     }
                 )
 
-    # 4. WHO - User information
+    # 4. REGION/WHO - Region and user information
+    fields.append(
+        {"title": "Region", "value": detail.get("awsRegion", region), "short": True}
+    )
+
     user_display = f"👤 {user_name}"
     if user_type == "IAMUser":
         user_display += " (IAM User)"
