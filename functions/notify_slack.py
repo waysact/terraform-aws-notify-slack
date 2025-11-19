@@ -805,10 +805,8 @@ def format_cloudtrail_security_event(  # noqa: C901
 
     fields.append({"title": "Principal", "value": user_display, "short": False})
 
-    # 5. WHEN/WHERE - Time and source
-    event_time = detail.get("eventTime", "")
+    # 5. WHERE - Source IP
     source_ip = detail.get("sourceIPAddress", "Unknown")
-    fields.append({"title": "Time", "value": event_time, "short": True})
     fields.append({"title": "Source IP", "value": source_ip, "short": True})
 
     # 6. HOW - Tool information (Terraform, etc.)
