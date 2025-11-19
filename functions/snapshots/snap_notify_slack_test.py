@@ -74,7 +74,7 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_autho
                     {
                         'short': True,
                         'title': 'Event',
-                        'value': '📥 *AuthorizeSecurityGroupIngress*'
+                        'value': '⬇️ *AuthorizeSecurityGroupIngress*'
                     },
                     {
                         'short': True,
@@ -131,7 +131,7 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_autho
                     {
                         'short': True,
                         'title': 'Event',
-                        'value': '📥 *AuthorizeSecurityGroupIngress*'
+                        'value': '⬇️ *AuthorizeSecurityGroupIngress*'
                     },
                     {
                         'short': True,

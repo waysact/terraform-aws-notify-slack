@@ -611,8 +611,8 @@ def format_cloudtrail_security_event(  # noqa: C901
     emoji_map = {
         "CreateSecurityGroup": "🆕",
         "DeleteSecurityGroup": "🗑️",
-        "AuthorizeSecurityGroupIngress": "📥",
-        "AuthorizeSecurityGroupEgress": "📤",
+        "AuthorizeSecurityGroupIngress": "⬇️",
+        "AuthorizeSecurityGroupEgress": "⬆️",
         "RevokeSecurityGroupIngress": "🔐",
         "RevokeSecurityGroupEgress": "🔐",
         "CreateNetworkAcl": "🆕",
