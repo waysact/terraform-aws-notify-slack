@@ -99,6 +99,11 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_autho
                     },
                     {
                         'short': True,
+                        'title': 'Time',
+                        'value': '⌚ 2025-01-15T23:15:30Z'
+                    },
+                    {
+                        'short': True,
                         'title': 'Source IP',
                         'value': '🌐 203.0.113.42'
                     },
@@ -155,6 +160,11 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_autho
                     },
                     {
                         'short': True,
+                        'title': 'Time',
+                        'value': '⌚ 2025-01-16T14:20:00Z'
+                    },
+                    {
+                        'short': True,
                         'title': 'Source IP',
                         'value': '🌐 192.0.2.100'
                     }
@@ -203,6 +213,11 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_creat
                         'short': False,
                         'title': 'Principal',
                         'value': '👤 network-admin (IAM User) 🔐'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Time',
+                        'value': '⌚ 2025-01-15T23:30:45Z'
                     },
                     {
                         'short': True,
@@ -272,6 +287,11 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_creat
                     },
                     {
                         'short': True,
+                        'title': 'Time',
+                        'value': '⌚ 2025-01-15T22:44:07Z'
+                    },
+                    {
+                        'short': True,
                         'title': 'Source IP',
                         'value': '🌐 52.93.178.234'
                     },
@@ -320,6 +340,11 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudtrail_delet
                         'short': False,
                         'title': 'Principal',
                         'value': '👤 security-admin (IAM User)'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Time',
+                        'value': '⌚ 2025-01-16T10:22:15Z'
                     },
                     {
                         'short': True,
