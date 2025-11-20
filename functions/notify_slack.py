@@ -611,10 +611,10 @@ def format_cloudtrail_security_event(  # noqa: C901
     emoji_map = {
         "CreateSecurityGroup": "🆕",
         "DeleteSecurityGroup": "🗑️",
-        "AuthorizeSecurityGroupIngress": "🔓",
-        "AuthorizeSecurityGroupEgress": "📤",
-        "RevokeSecurityGroupIngress": "🔒",
-        "RevokeSecurityGroupEgress": "🚫",
+        "AuthorizeSecurityGroupIngress": "⬇️",
+        "AuthorizeSecurityGroupEgress": "⬆️",
+        "RevokeSecurityGroupIngress": "🔐",
+        "RevokeSecurityGroupEgress": "🔐",
         "CreateNetworkAcl": "🆕",
         "CreateNetworkAclEntry": "➕",
         "DeleteNetworkAcl": "🗑️",
@@ -642,58 +642,57 @@ def format_cloudtrail_security_event(  # noqa: C901
     request_params = detail.get("requestParameters", {})
     response_elements = detail.get("responseElements", {})
 
-    # Build fields based on event type
+    # Build fields based on event type - PRIORITY ORDER: What, Resource, Changes, Region/Who, Where, How
     fields = []
 
-    # Event name
+    # 1. WHAT - Event name (most critical)
     fields.append({"title": "Event", "value": f"{emoji} *{event_name}*", "short": True})
 
-    # Region
-    fields.append(
-        {"title": "Region", "value": detail.get("awsRegion", region), "short": True}
-    )
-
-    # User info
-    user_display = f"👤 {user_name}"
-    if user_type == "IAMUser":
-        user_display += " (IAM User)"
-        if mfa_authenticated == "true":
-            user_display += " 🔐"
-    elif user_type == "AssumedRole":
-        user_display += " (Assumed Role)"
-
-    fields.append({"title": "Principal", "value": user_display, "short": False})
-
-    # Time
-    event_time = detail.get("eventTime", "")
-    fields.append({"title": "Time", "value": event_time, "short": True})
-
-    # Source IP
-    source_ip = detail.get("sourceIPAddress", "Unknown")
-    fields.append({"title": "Source IP", "value": source_ip, "short": True})
-
-    # Security Group specific details
+    # 2. RESOURCE - Security Group or NACL identifiers
     if "SecurityGroup" in event_name:
         group_id = request_params.get("groupId") or response_elements.get("groupId", "")
         group_name = request_params.get("groupName", "")
         vpc_id = request_params.get("vpcId", "")
 
+        if group_id:
+            fields.append(
+                {"title": "Security Group ID", "value": f"🛡️ `{group_id}`", "short": True}
+            )
+
         if group_name:
             fields.append(
                 {
                     "title": "Security Group Name",
-                    "value": f"`{group_name}`",
+                    "value": f"🛡️ `{group_name}`",
                     "short": True,
                 }
             )
 
-        if group_id:
+        if vpc_id:
+            fields.append({"title": "VPC ID", "value": f"`{vpc_id}`", "short": True})
+
+    elif "NetworkAcl" in event_name:
+        nacl_id = request_params.get("networkAclId") or response_elements.get(
+            "networkAclId", ""
+        )
+        vpc_id = request_params.get("vpcId", "")
+
+        if nacl_id:
             fields.append(
-                {"title": "Security Group ID", "value": f"`{group_id}`", "short": True}
+                {"title": "Network ACL ID", "value": f"🚧 `{nacl_id}`", "short": True}
             )
 
         if vpc_id:
             fields.append({"title": "VPC ID", "value": f"`{vpc_id}`", "short": True})
+
+    # 3. CHANGES - Rule changes or configuration details
+    if "SecurityGroup" in event_name:
+        # Show description for create operations
+        group_description = request_params.get("groupDescription", "")
+        if group_description and event_name == "CreateSecurityGroup":
+            fields.append(
+                {"title": "Description", "value": group_description, "short": False}
+            )
 
         # For rule changes, show the specific rules
         if "Authorize" in event_name or "Revoke" in event_name:
@@ -730,7 +729,9 @@ def format_cloudtrail_security_event(  # noqa: C901
                                 protocol_display = (
                                     protocol.upper() if protocol != "-1" else "All"
                                 )
-                                rule_str = f"• {protocol_display} | {port_str} | {cidr}"
+                                # Add warning emoji for risky CIDR ranges
+                                warning = "⚠️ " if cidr in ["0.0.0.0/0", "::/0"] else ""
+                                rule_str = f"{warning}• {protocol_display} | {port_str} | {cidr}"
                                 if desc:
                                     rule_str += f" | {desc}"
                                 rule_details.append(rule_str)
@@ -760,28 +761,7 @@ def format_cloudtrail_security_event(  # noqa: C901
                             }
                         )
 
-        # Show description for create/modify
-        group_description = request_params.get("groupDescription", "")
-        if group_description and event_name == "CreateSecurityGroup":
-            fields.append(
-                {"title": "Description", "value": group_description, "short": False}
-            )
-
-    # NACL specific details
     elif "NetworkAcl" in event_name:
-        nacl_id = request_params.get("networkAclId") or response_elements.get(
-            "networkAclId", ""
-        )
-        vpc_id = request_params.get("vpcId", "")
-
-        if nacl_id:
-            fields.append(
-                {"title": "Network ACL ID", "value": f"`{nacl_id}`", "short": True}
-            )
-
-        if vpc_id:
-            fields.append({"title": "VPC ID", "value": f"`{vpc_id}`", "short": True})
-
         # Show rule details for entry operations
         if "Entry" in event_name:
             rule_number = request_params.get("ruleNumber", "")
@@ -794,7 +774,8 @@ def format_cloudtrail_security_event(  # noqa: C901
             if rule_number:
                 entry_details.append(f"Rule #: {rule_number}")
             if rule_action:
-                entry_details.append(f"Action: {rule_action.upper()}")
+                action_emoji = "✅" if rule_action.upper() == "ALLOW" else "❌"
+                entry_details.append(f"Action: {action_emoji} {rule_action.upper()}")
             if egress is not None:
                 entry_details.append(f"Direction: {'Egress' if egress else 'Ingress'}")
             if cidr_block:
@@ -813,7 +794,28 @@ def format_cloudtrail_security_event(  # noqa: C901
                     }
                 )
 
-    # User Agent (often contains Terraform info)
+    # 4. REGION/WHO - Region and user information
+    fields.append(
+        {"title": "Region", "value": f"🌏 {detail.get('awsRegion', region)}", "short": True}
+    )
+
+    user_display = f"👤 {user_name}"
+    if user_type == "IAMUser":
+        user_display += " (IAM User)"
+        if mfa_authenticated == "true":
+            user_display += " 🔐"
+    elif user_type == "AssumedRole":
+        user_display += " (Assumed Role)"
+
+    fields.append({"title": "Principal", "value": user_display, "short": False})
+
+    # 5. WHEN/WHERE - Time and source
+    event_time = detail.get("eventTime", "")
+    source_ip = detail.get("sourceIPAddress", "Unknown")
+    fields.append({"title": "Time", "value": f"⌚ {event_time}", "short": True})
+    fields.append({"title": "Source IP", "value": f"🌐 {source_ip}", "short": True})
+
+    # 6. HOW - Tool information (Terraform, etc.)
     user_agent = detail.get("userAgent", "")
     if "Terraform" in user_agent:
         # Extract Terraform version
