@@ -1,0 +1,84 @@
+{
+  "version": "0",
+  "id": "12345678-1234-1234-1234-123456789013",
+  "detail-type": "AWS API Call via CloudTrail",
+  "source": "aws.ec2",
+  "account": "000000000000",
+  "time": "2025-01-15T23:15:30Z",
+  "region": "us-east-1",
+  "resources": [],
+  "detail": {
+    "eventVersion": "1.10",
+    "userIdentity": {
+      "type": "AssumedRole",
+      "principalId": "AIDAIPSVCDGDEZEXAMPLE:session-name",
+      "arn": "arn:aws:sts::000000000000:assumed-role/DevOpsRole/terraform-session",
+      "accountId": "000000000000",
+      "accessKeyId": "ASIAZA6BDNXXXEXAMPLE",
+      "sessionContext": {
+        "attributes": {
+          "creationDate": "2025-01-15T23:00:00Z",
+          "mfaAuthenticated": "false"
+        }
+      }
+    },
+    "eventTime": "2025-01-15T23:15:30Z",
+    "eventSource": "ec2.amazonaws.com",
+    "eventName": "AuthorizeSecurityGroupIngress",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "203.0.113.42",
+    "userAgent": "APN/1.0 HashiCorp/1.0 Terraform/1.6.0 (+https://www.terraform.io) terraform-provider-aws/5.30.0 (+https://registry.terraform.io/providers/hashicorp/aws) aws-sdk-go-v2/1.21.0",
+    "requestParameters": {
+      "groupId": "sg-0abcd1234efgh5678",
+      "ipPermissions": {
+        "items": [
+          {
+            "ipProtocol": "tcp",
+            "fromPort": 443,
+            "toPort": 443,
+            "ipRanges": {
+              "items": [
+                {
+                  "cidrIp": "10.0.0.0/8",
+                  "description": "Allow HTTPS from internal network"
+                }
+              ]
+            }
+          },
+          {
+            "ipProtocol": "tcp",
+            "fromPort": 22,
+            "toPort": 22,
+            "groups": {
+              "items": [
+                {
+                  "groupId": "sg-0xyz9876abcd5432",
+                  "description": "Allow SSH from bastion host"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "responseElements": {
+      "requestId": "a1b2c3d4-5678-90ab-cdef-1234567890ab",
+      "_return": True,
+      "securityGroupRuleSet": {
+        "items": []
+      }
+    },
+    "requestID": "a1b2c3d4-5678-90ab-cdef-1234567890ab",
+    "eventID": "f1e2d3c4-b5a6-7890-abcd-ef1234567890",
+    "readOnly": False,
+    "eventType": "AwsApiCall",
+    "managementEvent": True,
+    "recipientAccountId": "000000000000",
+    "eventCategory": "Management",
+    "tlsDetails": {
+      "tlsVersion": "TLSv1.3",
+      "cipherSuite": "TLS_AES_256_GCM_SHA384",
+      "clientProvidedHostHeader": "ec2.us-east-1.amazonaws.com"
+    }
+  }
+}

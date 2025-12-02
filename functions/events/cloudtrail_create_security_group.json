@@ -1,0 +1,56 @@
+{
+  "version": "0",
+  "id": "12345678-1234-1234-1234-123456789012",
+  "detail-type": "AWS API Call via CloudTrail",
+  "source": "aws.ec2",
+  "account": "000000000000",
+  "time": "2025-01-15T22:44:07Z",
+  "region": "eu-west-1",
+  "resources": [],
+  "detail": {
+    "eventVersion": "1.10",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAIPSVCDGDEZEXAMPLE",
+      "arn": "arn:aws:iam::000000000000:user/userExample",
+      "accountId": "000000000000",
+      "accessKeyId": "ASIAZA6BDNXXXEXAMPLE",
+      "userName": "userExample",
+      "sessionContext": {
+        "attributes": {
+          "creationDate": "2025-01-15T22:12:19Z",
+          "mfaAuthenticated": "true"
+        }
+      }
+    },
+    "eventTime": "2025-01-15T22:44:07Z",
+    "eventSource": "ec2.amazonaws.com",
+    "eventName": "CreateSecurityGroup",
+    "awsRegion": "eu-west-1",
+    "sourceIPAddress": "52.93.178.234",
+    "userAgent": "APN/1.0 HashiCorp/1.0 Terraform/0.12.31 (+https://www.terraform.io) terraform-provider-aws/5.94.1 (+https://registry.terraform.io/providers/hashicorp/aws) aws-sdk-go-v2/1.36.3 ua/2.1 os/macos lang/go#1.23.7 md/GOOS#darwin md/GOARCH#arm64 api/ec2#1.210.1 m/g",
+    "requestParameters": {
+      "groupName": "utility-instance",
+      "groupDescription": "Allow full outbound access for EC2 utility instance",
+      "vpcId": "vpc-730b0311"
+    },
+    "responseElements": {
+      "requestId": "091a15cb-400f-4ae9-b2b5-a9d152a22904",
+      "_return": True,
+      "groupId": "sg-077f4afab6ad41d72",
+      "securityGroupArn": "arn:aws:ec2:eu-west-1:000000000000:security-group/sg-077f4afab6ad41d72"
+    },
+    "requestID": "091a15cb-400f-4ae9-b2b5-a9d152a22904",
+    "eventID": "0b04b0be-b49f-4fec-9b51-6eb870b27c89",
+    "readOnly": False,
+    "eventType": "AwsApiCall",
+    "managementEvent": True,
+    "recipientAccountId": "000000000000",
+    "eventCategory": "Management",
+    "tlsDetails": {
+      "tlsVersion": "TLSv1.3",
+      "cipherSuite": "TLS_AES_128_GCM_SHA256",
+      "clientProvidedHostHeader": "ec2.eu-west-1.amazonaws.com"
+    }
+  }
+}
