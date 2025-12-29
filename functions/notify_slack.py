@@ -144,6 +144,69 @@ def format_cloudwatch_alarm(message: Dict[str, Any], region: str) -> Dict[str, A
     }
 
 
+def format_cloudwatch_alarm_eventbridge(
+    message: Dict[str, Any], region: str
+) -> Dict[str, Any]:
+    """Format EventBridge CloudWatch Alarm State Change event into Slack message format
+
+    :params message: EventBridge event containing CloudWatch alarm state change
+    :params region: AWS region where the event originated from
+    :returns: formatted Slack message payload
+    """
+
+    cloudwatch_url = get_service_url(region=region, service="cloudwatch")
+    detail = message.get("detail", {})
+    alarm_name = detail.get("alarmName", "Unknown Alarm")
+    configuration = detail.get("configuration", {})
+    state = detail.get("state", {})
+    previous_state = detail.get("previousState", {})
+
+    current_state_value = state.get("value", "UNKNOWN")
+    old_state_value = previous_state.get("value", "UNKNOWN")
+    alarm_description = configuration.get("description", "No description provided")
+    alarm_reason = state.get("reason", "No reason provided")
+
+    # Handle case where state value might not be in our enum
+    try:
+        color = CloudWatchAlarmState[current_state_value].value
+    except KeyError:
+        color = "warning"
+
+    return {
+        "color": color,
+        "fallback": f"Alarm {alarm_name} triggered",
+        "fields": [
+            {"title": "Alarm Name", "value": f"`{alarm_name}`", "short": True},
+            {
+                "title": "Alarm Description",
+                "value": f"`{alarm_description}`",
+                "short": False,
+            },
+            {
+                "title": "Alarm reason",
+                "value": f"`{alarm_reason}`",
+                "short": False,
+            },
+            {
+                "title": "Old State",
+                "value": f"`{old_state_value}`",
+                "short": True,
+            },
+            {
+                "title": "Current State",
+                "value": f"`{current_state_value}`",
+                "short": True,
+            },
+            {
+                "title": "Link to Alarm",
+                "value": f"{cloudwatch_url}#alarm:alarmFilter=ANY;name={urllib.parse.quote(alarm_name)}",
+                "short": False,
+            },
+        ],
+        "text": f"AWS CloudWatch notification - {alarm_name}",
+    }
+
+
 def format_aws_security_hub(message: Dict[str, Any], region: str) -> Dict[str, Any]:
     """
     Format AWS Security Hub finding event into Slack message format
@@ -920,6 +983,13 @@ def parse_notification(
 
     if "AlarmName" in message:
         return format_cloudwatch_alarm(message=message, region=region)
+    if (
+        isinstance(message, Dict)
+        and message.get("detail-type") == "CloudWatch Alarm State Change"
+    ):
+        return format_cloudwatch_alarm_eventbridge(
+            message=message, region=message.get("region", region)
+        )
     if isinstance(message, Dict) and message.get("detail-type") == "GuardDuty Finding":
         return format_guardduty_finding(message=message, region=message["region"])
     if (
