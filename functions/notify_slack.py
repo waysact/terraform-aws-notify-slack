@@ -536,6 +536,14 @@ class AwsHealthCategory(Enum):
     issue = "danger"
 
 
+class EcsEventSeverity(Enum):
+    """Maps ECS event severity to Slack message format colour"""
+
+    INFO = "good"
+    WARN = "warning"
+    ERROR = "danger"
+
+
 def format_aws_health(message: Dict[str, Any], region: str) -> Dict[str, Any]:
     """
     Format AWS Health event into Slack message format
@@ -591,6 +599,177 @@ def format_aws_health(message: Dict[str, Any], region: str) -> Dict[str, Any]:
             {
                 "title": "Link to Event",
                 "value": f"{aws_health_url}",
+                "short": False,
+            },
+        ],
+    }
+
+
+def _parse_ecs_service_arn(arn: str) -> tuple[str, str]:
+    """Extract cluster and service names from an ECS service ARN.
+
+    :param arn: ECS service ARN (arn:aws:ecs:<region>:<account>:service/<cluster>/<service>)
+    :returns: (cluster_name, service_name) tuple
+    """
+    try:
+        resource = arn.split(":")[5]
+        parts = resource.split("/")
+        return (parts[1], parts[2])
+    except (IndexError, AttributeError):
+        return ("Unknown", "Unknown")
+
+
+def _get_ecs_service_url(region: str, cluster: str, service: str) -> str:
+    """Build ECS console URL for a service.
+
+    :param region: AWS region
+    :param cluster: ECS cluster name
+    :param service: ECS service name
+    :returns: ECS console URL
+    """
+    if region.startswith("us-gov-"):
+        return (
+            f"https://console.amazonaws-us-gov.com/ecs/v2/clusters/"
+            f"{cluster}/services/{service}?region={region}"
+        )
+    return (
+        f"https://console.aws.amazon.com/ecs/v2/clusters/"
+        f"{cluster}/services/{service}?region={region}"
+    )
+
+
+_ECS_EVENT_EMOJI = {
+    "INFO": "\u2705",
+    "WARN": "\u26a0\ufe0f",
+    "ERROR": "\U0001f534",
+}
+
+
+def format_ecs_service_action(
+    message: Dict[str, Any], region: str
+) -> Dict[str, Any]:
+    """Format ECS Service Action event into Slack message format.
+
+    :params message: EventBridge message body containing ECS Service Action
+    :params region: AWS region where the event originated from
+    :returns: formatted Slack message payload
+    """
+    detail = message["detail"]
+    event_type = detail.get("eventType", "INFO")
+    event_name = detail.get("eventName", "Unknown")
+    account = message.get("account", "Unknown")
+    time = message.get("time", "Unknown")
+
+    service_arn = message.get("resources", [""])[0]
+    cluster_name, service_name = _parse_ecs_service_arn(service_arn)
+
+    try:
+        color = EcsEventSeverity[event_type].value
+    except KeyError:
+        color = "warning"
+
+    emoji = _ECS_EVENT_EMOJI.get(event_type, "")
+    ecs_url = _get_ecs_service_url(region, cluster_name, service_name)
+
+    return {
+        "color": color,
+        "fallback": f"ECS Service Action: {event_name} for {service_name}",
+        "text": f"AWS ECS Service Action - {service_name}",
+        "fields": [
+            {
+                "title": "Event",
+                "value": f"`{emoji} {event_name}`",
+                "short": True,
+            },
+            {"title": "Severity", "value": f"`{event_type}`", "short": True},
+            {
+                "title": "Service",
+                "value": f"`{service_name}`",
+                "short": True,
+            },
+            {
+                "title": "Cluster",
+                "value": f"`{cluster_name}`",
+                "short": True,
+            },
+            {"title": "Account", "value": f"`{account}`", "short": True},
+            {"title": "Region", "value": f"`{region}`", "short": True},
+            {"title": "Time", "value": f"`{time}`", "short": True},
+            {
+                "title": "Link to Service",
+                "value": ecs_url,
+                "short": False,
+            },
+        ],
+    }
+
+
+def format_ecs_deployment_state_change(
+    message: Dict[str, Any], region: str
+) -> Dict[str, Any]:
+    """Format ECS Deployment State Change event into Slack message format.
+
+    :params message: EventBridge message body containing ECS Deployment State Change
+    :params region: AWS region where the event originated from
+    :returns: formatted Slack message payload
+    """
+    detail = message["detail"]
+    event_type = detail.get("eventType", "INFO")
+    event_name = detail.get("eventName", "Unknown")
+    deployment_id = detail.get("deploymentId", "Unknown")
+    reason = detail.get("reason", "No reason provided")
+    updated_at = detail.get("updatedAt", "Unknown")
+    account = message.get("account", "Unknown")
+    time = message.get("time", "Unknown")
+
+    service_arn = message.get("resources", [""])[0]
+    cluster_name, service_name = _parse_ecs_service_arn(service_arn)
+
+    try:
+        color = EcsEventSeverity[event_type].value
+    except KeyError:
+        color = "warning"
+
+    emoji = _ECS_EVENT_EMOJI.get(event_type, "")
+    ecs_url = _get_ecs_service_url(region, cluster_name, service_name)
+
+    return {
+        "color": color,
+        "fallback": f"ECS Deployment: {event_name} for {service_name}",
+        "text": f"AWS ECS Deployment State Change - {service_name}",
+        "fields": [
+            {
+                "title": "Event",
+                "value": f"`{emoji} {event_name}`",
+                "short": True,
+            },
+            {"title": "Severity", "value": f"`{event_type}`", "short": True},
+            {
+                "title": "Service",
+                "value": f"`{service_name}`",
+                "short": True,
+            },
+            {
+                "title": "Cluster",
+                "value": f"`{cluster_name}`",
+                "short": True,
+            },
+            {
+                "title": "Deployment ID",
+                "value": f"`{deployment_id}`",
+                "short": True,
+            },
+            {"title": "Account", "value": f"`{account}`", "short": True},
+            {"title": "Reason", "value": f"`{reason}`", "short": False},
+            {
+                "title": "Updated At",
+                "value": f"`{updated_at}`",
+                "short": True,
+            },
+            {"title": "Time", "value": f"`{time}`", "short": True},
+            {
+                "title": "Link to Service",
+                "value": ecs_url,
                 "short": False,
             },
         ],
@@ -1007,6 +1186,17 @@ def parse_notification(
         return format_aws_security_hub(message=message, region=message["region"])
     if isinstance(message, Dict) and message.get("detail-type") == "AWS Health Event":
         return format_aws_health(message=message, region=message["region"])
+    if isinstance(message, Dict) and message.get("detail-type") == "ECS Service Action":
+        return format_ecs_service_action(
+            message=message, region=message.get("region", region)
+        )
+    if (
+        isinstance(message, Dict)
+        and message.get("detail-type") == "ECS Deployment State Change"
+    ):
+        return format_ecs_deployment_state_change(
+            message=message, region=message.get("region", region)
+        )
     if subject == "Notification from AWS Backup":
         return format_aws_backup(message=str(message))
     return format_default(message=message, subject=subject)
