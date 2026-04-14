@@ -27,7 +27,7 @@
             "period": 300,
             "stat": "Average"
           },
-          "returnData": true
+          "returnData": True
         }
       ]
     },
