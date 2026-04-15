@@ -7,7 +7,7 @@
   "time": "2024-01-15T11:45:00Z",
   "region": "us-east-1",
   "resources": [
-    "arn:aws:ecs:us-east-1:123456789012:service/production/api-service"
+    "arn:aws:ecs:us-east-1:123456789012:service/api-service"
   ],
   "detail": {
     "eventType": "ERROR",

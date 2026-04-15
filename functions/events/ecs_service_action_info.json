@@ -7,7 +7,7 @@
   "time": "2024-01-15T10:30:00Z",
   "region": "us-east-1",
   "resources": [
-    "arn:aws:ecs:us-east-1:123456789012:service/my-cluster/my-service"
+    "arn:aws:ecs:us-east-1:123456789012:service/my-service"
   ],
   "detail": {
     "eventType": "INFO",

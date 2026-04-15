@@ -605,18 +605,42 @@ def format_aws_health(message: Dict[str, Any], region: str) -> Dict[str, Any]:
     }
 
 
-def _parse_ecs_service_arn(arn: str) -> tuple[str, str]:
+def _parse_ecs_service_arn(arn: str) -> tuple[Optional[str], Optional[str]]:
     """Extract cluster and service names from an ECS service ARN.
 
-    :param arn: ECS service ARN (arn:aws:ecs:<region>:<account>:service/<cluster>/<service>)
-    :returns: (cluster_name, service_name) tuple
+    Handles both ARN formats:
+      - New: arn:aws:ecs:<region>:<account>:service/<cluster>/<service>
+      - Old: arn:aws:ecs:<region>:<account>:service/<service>
+
+    :param arn: ECS service ARN
+    :returns: (cluster_name, service_name) tuple; cluster is None for old format
     """
     try:
         resource = arn.split(":")[5]
         parts = resource.split("/")
-        return (parts[1], parts[2])
+        if len(parts) == 3:
+            return (parts[1], parts[2])
+        if len(parts) == 2:
+            return (None, parts[1])
+        return (None, None)
     except (IndexError, AttributeError):
-        return ("Unknown", "Unknown")
+        return (None, None)
+
+
+def _parse_ecs_cluster_arn(arn: str) -> Optional[str]:
+    """Extract cluster name from an ECS cluster ARN.
+
+    :param arn: ECS cluster ARN (arn:aws:ecs:<region>:<account>:cluster/<cluster>)
+    :returns: cluster name or None
+    """
+    try:
+        resource = arn.split(":")[5]
+        parts = resource.split("/")
+        if len(parts) == 2 and parts[0] == "cluster":
+            return parts[1]
+        return None
+    except (IndexError, AttributeError):
+        return None
 
 
 def _get_ecs_service_url(region: str, cluster: str, service: str) -> str:
@@ -662,6 +686,11 @@ def format_ecs_service_action(
 
     service_arn = message.get("resources", [""])[0]
     cluster_name, service_name = _parse_ecs_service_arn(service_arn)
+    if not cluster_name:
+        cluster_name = _parse_ecs_cluster_arn(
+            detail.get("clusterArn", "")
+        ) or "Unknown"
+    service_name = service_name or "Unknown"
 
     try:
         color = EcsEventSeverity[event_type].value
@@ -724,6 +753,11 @@ def format_ecs_deployment_state_change(
 
     service_arn = message.get("resources", [""])[0]
     cluster_name, service_name = _parse_ecs_service_arn(service_arn)
+    if not cluster_name:
+        cluster_name = _parse_ecs_cluster_arn(
+            detail.get("clusterArn", "")
+        ) or "Unknown"
+    service_name = service_name or "Unknown"
 
     try:
         color = EcsEventSeverity[event_type].value

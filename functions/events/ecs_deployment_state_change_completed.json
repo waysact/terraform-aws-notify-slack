@@ -7,11 +7,12 @@
   "time": "2024-01-15T12:00:00Z",
   "region": "us-east-1",
   "resources": [
-    "arn:aws:ecs:us-east-1:123456789012:service/my-cluster/web-app"
+    "arn:aws:ecs:us-east-1:123456789012:service/web-app"
   ],
   "detail": {
     "eventType": "INFO",
     "eventName": "SERVICE_DEPLOYMENT_COMPLETED",
+    "clusterArn": "arn:aws:ecs:us-east-1:123456789012:cluster/my-cluster",
     "deploymentId": "ecs-svc/1234567890123456789",
     "updatedAt": "2024-01-15T12:00:00.000Z",
     "reason": "ECS deployment ecs-svc/1234567890123456789 completed."
