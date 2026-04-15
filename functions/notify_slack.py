@@ -810,6 +810,170 @@ def format_ecs_deployment_state_change(
     }
 
 
+_ECS_TASK_STATUS_COLOR = {
+    "RUNNING": "good",
+    "PENDING": "warning",
+    "PROVISIONING": "warning",
+    "DEPROVISIONING": "warning",
+    "ACTIVATING": "warning",
+    "STOPPED": "danger",
+}
+
+_ECS_TASK_STATUS_EMOJI = {
+    "RUNNING": "\u2705",
+    "PENDING": "\u23f3",
+    "PROVISIONING": "\u23f3",
+    "STOPPED": "\U0001f534",
+}
+
+
+def _parse_ecs_task_definition(arn: str) -> str:
+    """Extract task definition name:revision from ARN.
+
+    :param arn: task definition ARN
+    :returns: name:revision string or the original ARN
+    """
+    try:
+        resource = arn.split(":")[5]
+        parts = resource.split("/")
+        if len(parts) == 2:
+            return f"{parts[1]}:{arn.split(':')[6]}"
+        return arn
+    except (IndexError, AttributeError):
+        return arn
+
+
+def _format_container_statuses(containers: list) -> str:
+    """Format container names and exit codes into a compact string.
+
+    :param containers: list of container dicts from ECS event detail
+    :returns: formatted multi-line string of container statuses
+    """
+    lines = []
+    for c in containers:
+        name = c.get("name", "Unknown")
+        status = c.get("lastStatus", "Unknown")
+        exit_code = c.get("exitCode")
+        if exit_code is not None:
+            lines.append(f"{name}: {status} (exit {exit_code})")
+        else:
+            lines.append(f"{name}: {status}")
+    return "\n".join(lines)
+
+
+def format_ecs_task_state_change(
+    message: Dict[str, Any], region: str
+) -> Dict[str, Any]:
+    """Format ECS Task State Change event into Slack message format.
+
+    :params message: EventBridge message body containing ECS Task State Change
+    :params region: AWS region where the event originated from
+    :returns: formatted Slack message payload
+    """
+    detail = message["detail"]
+    last_status = detail.get("lastStatus", "Unknown")
+    desired_status = detail.get("desiredStatus", "Unknown")
+    stopped_reason = detail.get("stoppedReason")
+    stop_code = detail.get("stopCode")
+    account = message.get("account", "Unknown")
+    time = message.get("time", "Unknown")
+
+    cluster_name = _parse_ecs_cluster_arn(
+        detail.get("clusterArn", "")
+    ) or "Unknown"
+
+    group = detail.get("group", "")
+    service_name = group.removeprefix("service:") if group else "Unknown"
+
+    task_def_arn = detail.get("taskDefinitionArn", "Unknown")
+    task_def = _parse_ecs_task_definition(task_def_arn)
+
+    task_arn = detail.get("taskArn", "")
+    task_id = task_arn.rsplit("/", 1)[-1] if task_arn else "Unknown"
+
+    containers = detail.get("containers", [])
+    container_info = _format_container_statuses(containers)
+
+    color = _ECS_TASK_STATUS_COLOR.get(last_status, "warning")
+    emoji = _ECS_TASK_STATUS_EMOJI.get(last_status, "")
+
+    if region.startswith("us-gov-"):
+        ecs_url = (
+            f"https://console.amazonaws-us-gov.com/ecs/v2/clusters/"
+            f"{cluster_name}/services/{service_name}?region={region}"
+        )
+    else:
+        ecs_url = (
+            f"https://console.aws.amazon.com/ecs/v2/clusters/"
+            f"{cluster_name}/services/{service_name}?region={region}"
+        )
+
+    fields: list[Dict[str, Any]] = [
+        {
+            "title": "Task Status",
+            "value": f"`{emoji} {last_status}` \u2192 `{desired_status}`",
+            "short": True,
+        },
+        {
+            "title": "Service",
+            "value": f"`{service_name}`",
+            "short": True,
+        },
+        {
+            "title": "Cluster",
+            "value": f"`{cluster_name}`",
+            "short": True,
+        },
+        {
+            "title": "Task Definition",
+            "value": f"`{task_def}`",
+            "short": True,
+        },
+        {"title": "Task ID", "value": f"`{task_id}`", "short": False},
+    ]
+
+    if container_info:
+        fields.append(
+            {"title": "Containers", "value": container_info, "short": False}
+        )
+
+    if stopped_reason:
+        fields.append(
+            {
+                "title": "Stop Reason",
+                "value": f"`{stopped_reason}`",
+                "short": False,
+            }
+        )
+
+    if stop_code:
+        fields.append(
+            {"title": "Stop Code", "value": f"`{stop_code}`", "short": True}
+        )
+
+    fields.extend(
+        [
+            {"title": "Account", "value": f"`{account}`", "short": True},
+            {"title": "Region", "value": f"`{region}`", "short": True},
+            {"title": "Time", "value": f"`{time}`", "short": True},
+            {
+                "title": "Link to Service",
+                "value": ecs_url,
+                "short": False,
+            },
+        ]
+    )
+
+    return {
+        "color": color,
+        "fallback": (
+            f"ECS Task State Change: {last_status} for {service_name}"
+        ),
+        "text": f"AWS ECS Task State Change - {service_name}",
+        "fields": fields,
+    }
+
+
 def aws_backup_field_parser(message: str) -> Dict[str, str]:
     """
     Parser for AWS Backup event message. It extracts the fields from the message and returns a dictionary.
@@ -1229,6 +1393,13 @@ def parse_notification(
         and message.get("detail-type") == "ECS Deployment State Change"
     ):
         return format_ecs_deployment_state_change(
+            message=message, region=message.get("region", region)
+        )
+    if (
+        isinstance(message, Dict)
+        and message.get("detail-type") == "ECS Task State Change"
+    ):
+        return format_ecs_task_state_change(
             message=message, region=message.get("region", region)
         )
     if subject == "Notification from AWS Backup":

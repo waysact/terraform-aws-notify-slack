@@ -660,6 +660,84 @@ snapshots['test_event_get_slack_message_payload_snapshots event_ecs_service_acti
     }
 ]
 
+snapshots['test_event_get_slack_message_payload_snapshots event_ecs_task_state_change_stopped.json'] = [
+    {
+        'attachments': [
+            {
+                'color': 'danger',
+                'fallback': 'ECS Task State Change: STOPPED for web-app',
+                'fields': [
+                    {
+                        'short': True,
+                        'title': 'Task Status',
+                        'value': '`🔴 STOPPED` → `STOPPED`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Service',
+                        'value': '`web-app`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Cluster',
+                        'value': '`staging-cluster`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Task Definition',
+                        'value': '`web-app:42`'
+                    },
+                    {
+                        'short': False,
+                        'title': 'Task ID',
+                        'value': '`4f4713f7-0396-4fee-95eb-08e0f1f351cc`'
+                    },
+                    {
+                        'short': False,
+                        'title': 'Containers',
+                        'value': '''aws-guardduty-agent: STOPPED (exit 0)
+web-app: STOPPED (exit 137)'''
+                    },
+                    {
+                        'short': False,
+                        'title': 'Stop Reason',
+                        'value': '`Scaling activity initiated by (deployment ecs-svc/5706102347269691588)`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Stop Code',
+                        'value': '`ServiceSchedulerInitiated`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Account',
+                        'value': '`123456789012`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Region',
+                        'value': '`eu-west-1`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Time',
+                        'value': '`2024-01-15T05:14:51Z`'
+                    },
+                    {
+                        'short': False,
+                        'title': 'Link to Service',
+                        'value': 'https://console.aws.amazon.com/ecs/v2/clusters/staging-cluster/services/web-app?region=eu-west-1'
+                    }
+                ],
+                'text': 'AWS ECS Task State Change - web-app'
+            }
+        ],
+        'channel': 'slack_testing_sandbox',
+        'icon_emoji': ':aws:',
+        'username': 'notify_slack_test'
+    }
+]
+
 snapshots['test_event_get_slack_message_payload_snapshots event_guardduty_finding_high.json'] = [
     {
         'attachments': [
