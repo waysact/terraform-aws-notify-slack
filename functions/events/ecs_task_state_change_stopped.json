@@ -1,0 +1,44 @@
+{
+  "version": "0",
+  "id": "afbf5982-f529-b5d4-afed-eaa468569d0d",
+  "detail-type": "ECS Task State Change",
+  "source": "aws.ecs",
+  "account": "123456789012",
+  "time": "2024-01-15T05:14:51Z",
+  "region": "eu-west-1",
+  "resources": [
+    "arn:aws:ecs:eu-west-1:123456789012:task/4f4713f7-0396-4fee-95eb-08e0f1f351cc"
+  ],
+  "detail": {
+    "clusterArn": "arn:aws:ecs:eu-west-1:123456789012:cluster/staging-cluster",
+    "containers": [
+      {
+        "containerArn": "arn:aws:ecs:eu-west-1:123456789012:container/staging-cluster/4f4713f7/b2986f04",
+        "exitCode": 0,
+        "lastStatus": "STOPPED",
+        "name": "aws-guardduty-agent",
+        "taskArn": "arn:aws:ecs:eu-west-1:123456789012:task/4f4713f7-0396-4fee-95eb-08e0f1f351cc"
+      },
+      {
+        "containerArn": "arn:aws:ecs:eu-west-1:123456789012:container/staging-cluster/4f4713f7/bcab52f9",
+        "exitCode": 137,
+        "lastStatus": "STOPPED",
+        "name": "web-app",
+        "image": "123456789012.dkr.ecr.eu-west-1.amazonaws.com/web-app:build-100",
+        "taskArn": "arn:aws:ecs:eu-west-1:123456789012:task/4f4713f7-0396-4fee-95eb-08e0f1f351cc"
+      }
+    ],
+    "createdAt": "2024-01-15T05:10:43.983Z",
+    "desiredStatus": "STOPPED",
+    "group": "service:web-app",
+    "launchType": "FARGATE",
+    "lastStatus": "STOPPED",
+    "startedAt": "2024-01-15T05:11:27.506Z",
+    "stoppedAt": "2024-01-15T05:14:51.622Z",
+    "stoppedReason": "Scaling activity initiated by (deployment ecs-svc/5706102347269691588)",
+    "stopCode": "ServiceSchedulerInitiated",
+    "taskArn": "arn:aws:ecs:eu-west-1:123456789012:task/4f4713f7-0396-4fee-95eb-08e0f1f351cc",
+    "taskDefinitionArn": "arn:aws:ecs:eu-west-1:123456789012:task-definition/web-app:42",
+    "updatedAt": "2024-01-15T05:14:51.622Z"
+  }
+}

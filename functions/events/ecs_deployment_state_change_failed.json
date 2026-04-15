@@ -1,0 +1,20 @@
+{
+  "version": "0",
+  "id": "dh6f2369-4faa-7eh0-b8g0-d5f56fi1d6ef",
+  "detail-type": "ECS Deployment State Change",
+  "source": "aws.ecs",
+  "account": "123456789012",
+  "time": "2024-01-15T12:30:00Z",
+  "region": "us-west-2",
+  "resources": [
+    "arn:aws:ecs:us-west-2:123456789012:service/worker-service"
+  ],
+  "detail": {
+    "eventType": "ERROR",
+    "eventName": "SERVICE_DEPLOYMENT_FAILED",
+    "clusterArn": "arn:aws:ecs:us-west-2:123456789012:cluster/staging",
+    "deploymentId": "ecs-svc/9876543210987654321",
+    "updatedAt": "2024-01-15T12:30:00.000Z",
+    "reason": "ECS deployment circuit breaker: task failed to start."
+  }
+}

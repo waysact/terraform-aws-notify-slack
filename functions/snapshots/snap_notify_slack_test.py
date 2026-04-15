@@ -370,22 +370,22 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudwatch_alarm
         'attachments': [
             {
                 'color': 'danger',
-                'fallback': 'Alarm Example triggered',
+                'fallback': 'Alarm ServerCpuTooHigh triggered',
                 'fields': [
                     {
                         'short': True,
                         'title': 'Alarm Name',
-                        'value': '`Example`'
+                        'value': '`ServerCpuTooHigh`'
                     },
                     {
                         'short': False,
                         'title': 'Alarm Description',
-                        'value': '`Example alarm description.`'
+                        'value': '`Goes into alarm when server CPU utilization is too high!`'
                     },
                     {
                         'short': False,
                         'title': 'Alarm reason',
-                        'value': '`Threshold Crossed`'
+                        'value': '`Threshold Crossed: 1 out of the last 1 datapoints [99.50160229693434 (02/10/19 16:59:00)] was greater than the threshold (50.0) (minimum 1 datapoint for OK -> ALARM transition).`'
                     },
                     {
                         'short': True,
@@ -400,10 +400,336 @@ snapshots['test_event_get_slack_message_payload_snapshots event_cloudwatch_alarm
                     {
                         'short': False,
                         'title': 'Link to Alarm',
-                        'value': 'https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#alarm:alarmFilter=ANY;name=Example'
+                        'value': 'https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#alarm:alarmFilter=ANY;name=ServerCpuTooHigh'
                     }
                 ],
-                'text': 'AWS CloudWatch notification - Example'
+                'text': 'AWS CloudWatch notification - ServerCpuTooHigh'
+            }
+        ],
+        'channel': 'slack_testing_sandbox',
+        'icon_emoji': ':aws:',
+        'username': 'notify_slack_test'
+    }
+]
+
+snapshots['test_event_get_slack_message_payload_snapshots event_ecs_deployment_state_change_completed.json'] = [
+    {
+        'attachments': [
+            {
+                'color': 'good',
+                'fallback': 'ECS Deployment: SERVICE_DEPLOYMENT_COMPLETED for web-app',
+                'fields': [
+                    {
+                        'short': True,
+                        'title': 'Event',
+                        'value': '`✅ SERVICE_DEPLOYMENT_COMPLETED`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Severity',
+                        'value': '`INFO`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Service',
+                        'value': '`web-app`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Cluster',
+                        'value': '`my-cluster`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Deployment ID',
+                        'value': '`ecs-svc/1234567890123456789`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Account',
+                        'value': '`123456789012`'
+                    },
+                    {
+                        'short': False,
+                        'title': 'Reason',
+                        'value': '`ECS deployment ecs-svc/1234567890123456789 completed.`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Updated At',
+                        'value': '`2024-01-15T12:00:00.000Z`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Time',
+                        'value': '`2024-01-15T12:00:00Z`'
+                    },
+                    {
+                        'short': False,
+                        'title': 'Link to Service',
+                        'value': 'https://console.aws.amazon.com/ecs/v2/clusters/my-cluster/services/web-app?region=us-east-1'
+                    }
+                ],
+                'text': 'AWS ECS Deployment State Change - web-app'
+            }
+        ],
+        'channel': 'slack_testing_sandbox',
+        'icon_emoji': ':aws:',
+        'username': 'notify_slack_test'
+    }
+]
+
+snapshots['test_event_get_slack_message_payload_snapshots event_ecs_deployment_state_change_failed.json'] = [
+    {
+        'attachments': [
+            {
+                'color': 'danger',
+                'fallback': 'ECS Deployment: SERVICE_DEPLOYMENT_FAILED for worker-service',
+                'fields': [
+                    {
+                        'short': True,
+                        'title': 'Event',
+                        'value': '`🔴 SERVICE_DEPLOYMENT_FAILED`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Severity',
+                        'value': '`ERROR`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Service',
+                        'value': '`worker-service`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Cluster',
+                        'value': '`staging`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Deployment ID',
+                        'value': '`ecs-svc/9876543210987654321`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Account',
+                        'value': '`123456789012`'
+                    },
+                    {
+                        'short': False,
+                        'title': 'Reason',
+                        'value': '`ECS deployment circuit breaker: task failed to start.`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Updated At',
+                        'value': '`2024-01-15T12:30:00.000Z`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Time',
+                        'value': '`2024-01-15T12:30:00Z`'
+                    },
+                    {
+                        'short': False,
+                        'title': 'Link to Service',
+                        'value': 'https://console.aws.amazon.com/ecs/v2/clusters/staging/services/worker-service?region=us-west-2'
+                    }
+                ],
+                'text': 'AWS ECS Deployment State Change - worker-service'
+            }
+        ],
+        'channel': 'slack_testing_sandbox',
+        'icon_emoji': ':aws:',
+        'username': 'notify_slack_test'
+    }
+]
+
+snapshots['test_event_get_slack_message_payload_snapshots event_ecs_service_action_error.json'] = [
+    {
+        'attachments': [
+            {
+                'color': 'danger',
+                'fallback': 'ECS Service Action: SERVICE_TASK_PLACEMENT_FAILURE for api-service',
+                'fields': [
+                    {
+                        'short': True,
+                        'title': 'Event',
+                        'value': '`🔴 SERVICE_TASK_PLACEMENT_FAILURE`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Severity',
+                        'value': '`ERROR`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Service',
+                        'value': '`api-service`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Cluster',
+                        'value': '`production`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Account',
+                        'value': '`123456789012`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Region',
+                        'value': '`us-east-1`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Time',
+                        'value': '`2024-01-15T11:45:00Z`'
+                    },
+                    {
+                        'short': False,
+                        'title': 'Link to Service',
+                        'value': 'https://console.aws.amazon.com/ecs/v2/clusters/production/services/api-service?region=us-east-1'
+                    }
+                ],
+                'text': 'AWS ECS Service Action - api-service'
+            }
+        ],
+        'channel': 'slack_testing_sandbox',
+        'icon_emoji': ':aws:',
+        'username': 'notify_slack_test'
+    }
+]
+
+snapshots['test_event_get_slack_message_payload_snapshots event_ecs_service_action_info.json'] = [
+    {
+        'attachments': [
+            {
+                'color': 'good',
+                'fallback': 'ECS Service Action: SERVICE_STEADY_STATE for my-service',
+                'fields': [
+                    {
+                        'short': True,
+                        'title': 'Event',
+                        'value': '`✅ SERVICE_STEADY_STATE`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Severity',
+                        'value': '`INFO`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Service',
+                        'value': '`my-service`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Cluster',
+                        'value': '`my-cluster`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Account',
+                        'value': '`123456789012`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Region',
+                        'value': '`us-east-1`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Time',
+                        'value': '`2024-01-15T10:30:00Z`'
+                    },
+                    {
+                        'short': False,
+                        'title': 'Link to Service',
+                        'value': 'https://console.aws.amazon.com/ecs/v2/clusters/my-cluster/services/my-service?region=us-east-1'
+                    }
+                ],
+                'text': 'AWS ECS Service Action - my-service'
+            }
+        ],
+        'channel': 'slack_testing_sandbox',
+        'icon_emoji': ':aws:',
+        'username': 'notify_slack_test'
+    }
+]
+
+snapshots['test_event_get_slack_message_payload_snapshots event_ecs_task_state_change_stopped.json'] = [
+    {
+        'attachments': [
+            {
+                'color': 'danger',
+                'fallback': 'ECS Task State Change: STOPPED for web-app',
+                'fields': [
+                    {
+                        'short': True,
+                        'title': 'Task Status',
+                        'value': '`🔴 STOPPED` → `STOPPED`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Service',
+                        'value': '`web-app`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Cluster',
+                        'value': '`staging-cluster`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Task Definition',
+                        'value': '`web-app:42`'
+                    },
+                    {
+                        'short': False,
+                        'title': 'Task ID',
+                        'value': '`4f4713f7-0396-4fee-95eb-08e0f1f351cc`'
+                    },
+                    {
+                        'short': False,
+                        'title': 'Containers',
+                        'value': '''aws-guardduty-agent: STOPPED (exit 0)
+web-app: STOPPED (exit 137)'''
+                    },
+                    {
+                        'short': False,
+                        'title': 'Stop Reason',
+                        'value': '`Scaling activity initiated by (deployment ecs-svc/5706102347269691588)`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Stop Code',
+                        'value': '`ServiceSchedulerInitiated`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Account',
+                        'value': '`123456789012`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Region',
+                        'value': '`eu-west-1`'
+                    },
+                    {
+                        'short': True,
+                        'title': 'Time',
+                        'value': '`2024-01-15T05:14:51Z`'
+                    },
+                    {
+                        'short': False,
+                        'title': 'Link to Service',
+                        'value': 'https://console.aws.amazon.com/ecs/v2/clusters/staging-cluster/services/web-app?region=eu-west-1'
+                    }
+                ],
+                'text': 'AWS ECS Task State Change - web-app'
             }
         ],
         'channel': 'slack_testing_sandbox',
