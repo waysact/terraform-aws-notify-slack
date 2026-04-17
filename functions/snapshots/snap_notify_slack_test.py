@@ -670,7 +670,7 @@ snapshots['test_event_get_slack_message_payload_snapshots event_ecs_task_state_c
                     {
                         'short': True,
                         'title': 'Task Status',
-                        'value': '`🔴 STOPPED` → `STOPPED`'
+                        'value': '`🔴 STOPPED`'
                     },
                     {
                         'short': True,
