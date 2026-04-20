@@ -908,10 +908,18 @@ def format_ecs_task_state_change(
             f"{cluster_name}/services/{service_name}?region={region}"
         )
 
+    if last_status == desired_status:
+        status_value = f"`{emoji} {last_status}`"
+    else:
+        desired_emoji = _ECS_TASK_STATUS_EMOJI.get(desired_status, "")
+        status_value = (
+            f"`{emoji} {last_status}` \u2192 `{desired_emoji} {desired_status}`"
+        )
+
     fields: list[Dict[str, Any]] = [
         {
             "title": "Task Status",
-            "value": f"`{emoji} {last_status}` \u2192 `{desired_status}`",
+            "value": status_value,
             "short": True,
         },
         {
