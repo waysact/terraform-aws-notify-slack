@@ -14,8 +14,9 @@ import os
 import re
 import urllib.parse
 import urllib.request
+from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Dict, Optional, Union, cast
+from typing import Any, Dict, List, Optional, Union, cast
 from urllib.error import HTTPError
 
 import boto3
@@ -31,6 +32,8 @@ logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
 KMS_CLIENT = boto3.client("kms", region_name=REGION)
 
 SECURITY_HUB_CLIENT = boto3.client("securityhub", region_name=REGION)
+
+ECS_CLIENT = boto3.client("ecs", region_name=REGION)
 
 
 class AwsService(Enum):
@@ -667,6 +670,156 @@ _ECS_EVENT_EMOJI = {
     "WARN": "\u26a0\ufe0f",
     "ERROR": "\U0001f534",
 }
+
+# Tolerance window when matching `detail.createdAt` against `events[].createdAt`
+# from DescribeServices. Both timestamps come from ECS's own clock; the only
+# loss of precision is in the EventBridge payload going from microseconds to
+# milliseconds. 50ms is generous enough to absorb that without risking matching
+# the wrong event in practice.
+_ECS_EVENT_MATCH_TOLERANCE_MS = 50
+
+_ECS_STEADY_STATE_MESSAGE = "has reached a steady state"
+
+
+def _parse_ecs_event_created_at(value: Any) -> Optional[datetime]:
+    """Parse an ECS event timestamp into a UTC datetime.
+
+    Accepts ISO 8601 strings (as found in EventBridge `detail.createdAt`) or
+    `datetime` objects (as returned by boto3's `DescribeServices`). Returns
+    `None` if the value cannot be parsed.
+    """
+    if isinstance(value, datetime):
+        if value.tzinfo is None:
+            return value.replace(tzinfo=timezone.utc)
+        return value.astimezone(timezone.utc)
+    if not isinstance(value, str):
+        return None
+    try:
+        # `fromisoformat` in Python 3.11+ accepts the trailing 'Z' shorthand,
+        # but normalise just in case we run on an older runtime.
+        normalised = value.replace("Z", "+00:00")
+        parsed = datetime.fromisoformat(normalised)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def _find_predecessor_event(
+    events: List[Dict[str, Any]], target_ts: Optional[datetime]
+) -> Optional[Dict[str, Any]]:
+    """Locate the event preceding the dispatched one in `DescribeServices` output.
+
+    `events` is the list returned by `DescribeServices`, ordered most-recent
+    first. `target_ts` is the timestamp of the dispatched event taken from
+    `detail.createdAt`.
+
+    The function first tries to match the dispatched event by timestamp
+    (within `_ECS_EVENT_MATCH_TOLERANCE_MS`) and returns the next-older event.
+    If the match fails (propagation race, missing timestamp, etc.) it falls
+    back to a positional heuristic: if the most recent event looks like a
+    steady state heartbeat we assume that is the dispatched event itself and
+    use the second-most-recent as the predecessor; otherwise we treat the
+    most recent as the predecessor.
+
+    Returns `None` when there is no predecessor to inspect (empty list or the
+    matched event is the oldest visible).
+    """
+    if not events:
+        return None
+
+    if target_ts is not None:
+        tolerance_us = _ECS_EVENT_MATCH_TOLERANCE_MS * 1000
+        for idx, event in enumerate(events):
+            event_ts = _parse_ecs_event_created_at(event.get("createdAt"))
+            if event_ts is None:
+                continue
+            delta = abs((event_ts - target_ts).total_seconds() * 1_000_000)
+            if delta <= tolerance_us:
+                if idx + 1 >= len(events):
+                    return None
+                return events[idx + 1]
+
+    # Fallback: dispatched event has not yet propagated, or `detail.createdAt`
+    # is missing / unparseable.
+    head_message = events[0].get("message", "")
+    if _ECS_STEADY_STATE_MESSAGE in head_message:
+        if len(events) < 2:
+            return None
+        return events[1]
+    return events[0]
+
+
+def should_suppress_ecs_service_action(message: Dict[str, Any]) -> bool:
+    """Decide whether to suppress an `ECS Service Action` notification.
+
+    Currently only suppresses `SERVICE_STEADY_STATE` events whose immediate
+    predecessor on the service was also a steady state heartbeat. This keeps
+    the first steady state after a non-steady event (deployment completed,
+    unhealthy task, placement failure, etc.) so it still reaches Slack as a
+    recovery signal, while collapsing the periodic heartbeats that follow.
+
+    Fails open: any unexpected error from `DescribeServices` (throttling,
+    transient network issue, IAM hiccup) results in the message being sent.
+    A noisy Slack channel is preferable to silently dropping a real event.
+    """
+    detail = message.get("detail", {}) or {}
+    if detail.get("eventName") != "SERVICE_STEADY_STATE":
+        return False
+
+    service_arn = (message.get("resources") or [""])[0]
+    cluster_name, service_name = _parse_ecs_service_arn(service_arn)
+    if not cluster_name:
+        cluster_name = _parse_ecs_cluster_arn(detail.get("clusterArn", ""))
+    if not cluster_name or not service_name:
+        return False
+
+    try:
+        response = ECS_CLIENT.describe_services(
+            cluster=cluster_name, services=[service_name]
+        )
+    except Exception:
+        logger.exception(
+            "DescribeServices failed for cluster=%s service=%s; sending message",
+            cluster_name,
+            service_name,
+        )
+        return False
+
+    services = response.get("services") or []
+    if not services:
+        logger.debug(
+            "DescribeServices returned no services for cluster=%s service=%s",
+            cluster_name,
+            service_name,
+        )
+        return False
+
+    events = services[0].get("events") or []
+    target_ts = _parse_ecs_event_created_at(detail.get("createdAt"))
+    predecessor = _find_predecessor_event(events, target_ts)
+
+    if predecessor is None:
+        logger.debug(
+            "Suppressing SERVICE_STEADY_STATE for cluster=%s service=%s; "
+            "no predecessor event available",
+            cluster_name,
+            service_name,
+        )
+        return True
+
+    predecessor_message = predecessor.get("message", "")
+    if _ECS_STEADY_STATE_MESSAGE in predecessor_message:
+        logger.debug(
+            "Suppressing SERVICE_STEADY_STATE for cluster=%s service=%s; "
+            "predecessor was also a steady state heartbeat",
+            cluster_name,
+            service_name,
+        )
+        return True
+
+    return False
 
 
 def format_ecs_service_action(
@@ -1493,11 +1646,16 @@ def lambda_handler(event: Dict[str, Any], context: Dict[str, Any]) -> str:
     if os.environ.get("LOG_EVENTS", "False") == "True":
         logging.info("Event logging enabled: %s", json.dumps(event))
 
+    response = json.dumps({"code": 200, "info": "no records sent"})
+
     for record in event["Records"]:
         sns = record["Sns"]
         subject = sns["Subject"]
         message = sns["Message"]
         region = sns["TopicArn"].split(":")[3]
+
+        if _is_suppressed_ecs_steady_state(message):
+            continue
 
         payload = get_slack_message_payload(
             message=message, region=region, subject=subject
@@ -1511,3 +1669,29 @@ def lambda_handler(event: Dict[str, Any], context: Dict[str, Any]) -> str:
         )
 
     return response
+
+
+def _is_suppressed_ecs_steady_state(message: Union[str, Dict[str, Any]]) -> bool:
+    """Return True if `message` is an ECS Service Action steady state heartbeat
+    that should be suppressed.
+
+    Accepts the raw SNS message body (string or already-parsed dict). Any
+    parsing failure or unexpected shape returns False so the message is sent
+    through the normal path.
+    """
+    if isinstance(message, str):
+        try:
+            parsed = json.loads(message)
+        except (json.JSONDecodeError, ValueError):
+            return False
+    elif isinstance(message, Dict):
+        parsed = message
+    else:
+        return False
+
+    if not isinstance(parsed, Dict):
+        return False
+    if parsed.get("detail-type") != "ECS Service Action":
+        return False
+
+    return should_suppress_ecs_service_action(parsed)

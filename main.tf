@@ -33,6 +33,16 @@ locals {
     resources = ["*"]
   }
 
+  # Used by the lambda to inspect recent service events when deciding whether
+  # to suppress an ECS `SERVICE_STEADY_STATE` heartbeat. The action does not
+  # support resource-level permissions, so `*` is the only valid value.
+  lambda_policy_document_ecs = {
+    sid       = "AllowEcsDescribeServices"
+    effect    = "Allow"
+    actions   = ["ecs:DescribeServices"]
+    resources = ["*"]
+  }
+
   lambda_handler = try(split(".", basename(var.lambda_source_path))[0], "notify_slack")
 }
 
@@ -40,8 +50,14 @@ data "aws_iam_policy_document" "lambda" {
   count = var.create ? 1 : 0
 
   dynamic "statement" {
-    for_each = concat([local.lambda_policy_document,
-    local.lambda_policy_document_securityhub], var.kms_key_arn != "" ? [local.lambda_policy_document_kms] : [])
+    for_each = concat(
+      [
+        local.lambda_policy_document,
+        local.lambda_policy_document_securityhub,
+        local.lambda_policy_document_ecs,
+      ],
+      var.kms_key_arn != "" ? [local.lambda_policy_document_kms] : [],
+    )
     content {
       sid       = statement.value.sid
       effect    = statement.value.effect
